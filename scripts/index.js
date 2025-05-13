@@ -33,3 +33,5 @@ function renderCards(cards, container, deleting) {
 }
 
 renderCards(initialCards, placesList, deleteCard);
+
+//6 спринт. комит
