@@ -1,54 +1,52 @@
 import '/pages/index.css';
-import { initialCards } from './cards.js';
-import { deleteCard, renderCards } from './card.js';
+import { initialCards} from './cards.js';
+import { createCard, deleteCard } from './card.js';
 import {
-  openProfileModal,
   closeModal,
   handleCloseButtonClick,
-  AddImage,
+  openModal,
   handleFormSubmitEditProfile,
-  handleFormSubmitAddImage
-
+  handleFormSubmitAddImage,
 } from './modal.js';
 
 const popups = document.querySelectorAll('.popup');
 const placesList = document.querySelector('.places__list') || document.body;
 const modal = document.querySelector('.popup_type_edit');
 const editBtn = document.querySelector('.profile__edit-button');
-const closeBtn = document.querySelectorAll('.popup__close');
-const saveBtn = document.querySelector('.popup__button');
-let ProfilName = document.querySelector('.profile__title');
-let ProfilDesc = document.querySelector('.profile__description');
-let nameInput = document.querySelector('.popup__input_type_name')
-let jobInput = document.querySelector('.popup__input_type_description')
+const closeBtns = document.querySelectorAll('.popup__close');
+const profilName = document.querySelector('.profile__title');
+const profilDesc = document.querySelector('.profile__description');
+const nameInput = document.querySelector('.popup__input_type_name')
+const jobInput = document.querySelector('.popup__input_type_description')
 const addBtn = document.querySelector('.profile__add-button');
 const addPupup = document.querySelector('.popup_type_new-card');
 const imgName = document.querySelector('.popup__input_type_card-name');
 const imgUrl = document.querySelector('.popup__input_type_url');
 const imgForm = document.forms["new-place"];
-const formSaveBtn = imgForm.querySelector('.popup__button')
-
+const editForm = document.forms["edit-profile"];
+const popup = document.querySelector('.popup_type_image');
 
 renderCards(initialCards, placesList, deleteCard);
 
 popups.forEach(item => item.classList.add('popup_is-animated'));
 
-saveBtn.addEventListener('click', (evt) => {
-  handleFormSubmitEditProfile(evt, nameInput, jobInput, ProfilName, ProfilDesc);
+editForm.addEventListener('submit', (evt) => {
+  evt.preventDefault();
+  handleFormSubmitEditProfile(evt, nameInput, jobInput, profilName, profilDesc);
   closeModal(modal);
 });
 
 //обработчик профиля
-editBtn.addEventListener('click', () => openProfileModal(modal, nameInput, jobInput, ProfilName, ProfilDesc));
+editBtn.addEventListener('click', () => openProfileModal(modal, nameInput, jobInput, profilName, profilDesc));
 
-closeBtn.forEach((btn) => {
+closeBtns.forEach((btn) => {
   btn.addEventListener('click', (evt) => {
     handleCloseButtonClick(evt);
   });
 });
 
 // обработчик имг
-addBtn.addEventListener('click', () => AddImage(addPupup));
+addBtn.addEventListener('click', () => openModal(addPupup));
 
 //закрытие по оверлей
 document.querySelectorAll('.popup').forEach(modal => {
@@ -59,18 +57,8 @@ document.querySelectorAll('.popup').forEach(modal => {
   });
 });
 
-//закрытие по esc
-document.addEventListener('keydown', (evt) => {
-  if (evt.key === 'Escape') {
-    closeModal(modal);
-  }
-});
 
-document.addEventListener('keydown', (evt) => {
-  if (evt.key === 'Escape') {
-    closeModal(addPupup);
-  }
-});
+
 
 // Можно добавить обработчик для закрытия по кнопке или клику вне содержимого
 document.querySelectorAll('.popup__close').forEach(btn => {
@@ -79,12 +67,37 @@ document.querySelectorAll('.popup__close').forEach(btn => {
   });
 });
 
-formSaveBtn.addEventListener('click', (evt) => {
+imgForm.addEventListener('submit', (evt) => {evt.preventDefault();
   handleFormSubmitAddImage(evt, imgName, imgUrl, deleteCard, placesList);
   imgName.value = '';
   imgUrl.value = '';
   closeModal(addPupup);
 });
 
+// рендер 
+function renderCards(cards, container, deleting) {
+  cards.forEach((card) => {
+    const cardElem = createCard(card, deleting);
+    container.append(cardElem);
+  });
+}
+
+//открытие профиля
+function openProfileModal(modal, nameInput, jobInput, profilName, profilDesc) {
+    nameInput.value = profilName.textContent;
+    jobInput.value = profilDesc.textContent;
+  openModal(modal);
+}
+ 
+
+//открыть картинку
+  export const openImagePopup = (src, alt, caption) => {
+  const popupImage = popup.querySelector('.popup__image');
+  const popupCaption = popup.querySelector('.popup__caption');
+  popupImage.src = src;
+  popupImage.alt = alt;
+  popupCaption.textContent = caption;
+openModal(popup);
+}
 
 

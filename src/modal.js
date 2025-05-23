@@ -1,20 +1,17 @@
 import { createCard } from './card.js';
 
-//открытие профиля
-export function openProfileModal(modal, nameInput, jobInput, ProfilName, ProfilDesc) {
-    nameInput.value = ProfilName.textContent;
-    jobInput.value = ProfilDesc.textContent;
-    modal.classList.add('popup_is-opened');
-}
-
 //открытие добавление карточек
-export function AddImage(addPupup) {
-    addPupup.classList.add('popup_is-opened');
+
+
+export function openModal(modal) {
+    modal.classList.add('popup_is-opened');
+    document.addEventListener('keydown', handleEscape );
 }
 
 // закрытие popup
 export function closeModal(modal) {
     modal.classList.remove('popup_is-opened');
+    document.removeEventListener('keydown', handleEscape); 
 }
 
 export const handleCloseButtonClick = (evt) => {
@@ -25,15 +22,15 @@ export const handleCloseButtonClick = (evt) => {
 };
 
 //сохранение
-export function handleFormSubmitEditProfile(evt, nameInput, jobInput, ProfilName, ProfilDesc) {
+export function handleFormSubmitEditProfile(evt, nameInput, jobInput, profilName, profilDesc) {
     evt.preventDefault(); // Эта строчка отменяет стандартную отправку формы.
 
     // Так мы можем определить свою логику отправки.
     const nameInputValue = nameInput.value;
     const jobInputValue = jobInput.value;
 
-    ProfilName.textContent = nameInputValue;
-    ProfilDesc.textContent = jobInputValue;
+    profilName.textContent = nameInputValue;
+    profilDesc.textContent = jobInputValue;
 }
 
 export function handleFormSubmitAddImage(evt, imgName, imgUrl, deleteCard, placesList) {
@@ -46,3 +43,11 @@ export function handleFormSubmitAddImage(evt, imgName, imgUrl, deleteCard, place
 
     placesList.prepend(cardElement);
 }
+
+//закрытие по esc
+export const  handleEscape = (evt) => {
+  if (evt.key === "Escape") {
+    const openedModal = document.querySelector(".popup_is-opened");
+    if (openedModal) closeModal(openedModal);
+  }
+};
