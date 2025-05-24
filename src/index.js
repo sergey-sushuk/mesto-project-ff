@@ -1,12 +1,10 @@
 import '/pages/index.css';
 import { initialCards} from './cards.js';
-import { createCard, deleteCard } from './card.js';
+import { createCard} from './card.js';
 import {
   closeModal,
   handleCloseButtonClick,
-  openModal,
-  handleFormSubmitEditProfile,
-  handleFormSubmitAddImage,
+  openModal
 } from './modal.js';
 
 const popups = document.querySelectorAll('.popup');
@@ -26,7 +24,7 @@ const imgForm = document.forms["new-place"];
 const editForm = document.forms["edit-profile"];
 const popup = document.querySelector('.popup_type_image');
 
-renderCards(initialCards, placesList, deleteCard);
+renderCards(initialCards, placesList);
 
 popups.forEach(item => item.classList.add('popup_is-animated'));
 
@@ -57,9 +55,6 @@ document.querySelectorAll('.popup').forEach(modal => {
   });
 });
 
-
-
-
 // Можно добавить обработчик для закрытия по кнопке или клику вне содержимого
 document.querySelectorAll('.popup__close').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -68,17 +63,24 @@ document.querySelectorAll('.popup__close').forEach(btn => {
 });
 
 imgForm.addEventListener('submit', (evt) => {evt.preventDefault();
-  handleFormSubmitAddImage(evt, imgName, imgUrl, deleteCard, placesList);
+  handleFormSubmitAddImage(evt, imgName, imgUrl, placesList);
   imgName.value = '';
   imgUrl.value = '';
   closeModal(addPupup);
 });
 
 // рендер 
-function renderCards(cards, container, deleting) {
+function renderCards(cards, container) {
   cards.forEach((card) => {
-    const cardElem = createCard(card, deleting);
-    container.append(cardElem);
+    const cardElem = createCard();
+      const cardTitle = cardElem.querySelector('.card__title'); 
+      const cardImage = cardElem.querySelector('.card__image');
+      cardTitle.textContent = card.name;
+      cardImage.src = card.link;
+      cardImage.alt = card.name;
+       container.append(cardElem);
+      cardImage.addEventListener("click", () => { openImagePopup(cardImage.src, cardImage.alt, cardTitle.textContent) });
+    
   });
 }
 
@@ -91,7 +93,7 @@ function openProfileModal(modal, nameInput, jobInput, profilName, profilDesc) {
  
 
 //открыть картинку
-  export const openImagePopup = (src, alt, caption) => {
+  const openImagePopup = (src, alt, caption) => {
   const popupImage = popup.querySelector('.popup__image');
   const popupCaption = popup.querySelector('.popup__caption');
   popupImage.src = src;
@@ -100,4 +102,32 @@ function openProfileModal(modal, nameInput, jobInput, profilName, profilDesc) {
 openModal(popup);
 }
 
+//сохранение
+function handleFormSubmitEditProfile(evt, nameInput, jobInput, profilName, profilDesc) {
+    evt.preventDefault(); // Эта строчка отменяет стандартную отправку формы.
+
+    // Так мы можем определить свою логику отправки.
+    const nameInputValue = nameInput.value;
+    const jobInputValue = jobInput.value;
+
+    profilName.textContent = nameInputValue;
+    profilDesc.textContent = jobInputValue;
+}
+
+
+function handleFormSubmitAddImage(evt, imgName, imgUrl, placesList) {
+    evt.preventDefault();
+
+    const newImg = imgName.value;
+    const newUrl = imgUrl.value;
+    const cardElem = createCard();
+    const cardTitle = cardElem.querySelector('.card__title');
+    const cardImage = cardElem.querySelector('.card__image');
+    cardTitle.textContent = newImg;
+    cardImage.src = newUrl;
+    cardImage.alt = newImg;
+
+    placesList.prepend(cardElem);
+    cardImage.addEventListener("click", () => { openImagePopup(cardImage.src, cardImage.alt, cardTitle.textContent) });
+}
 
