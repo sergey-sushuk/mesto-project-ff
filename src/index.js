@@ -1,6 +1,6 @@
 import '/pages/index.css';
-import { initialCards} from './cards.js';
-import { createCard} from './card.js';
+import { initialCards } from './cards.js';
+import { createCard, deleteCard, handleLikeClick } from './card.js';
 import {
   closeModal,
   handleCloseButtonClick,
@@ -62,7 +62,8 @@ document.querySelectorAll('.popup__close').forEach(btn => {
   });
 });
 
-imgForm.addEventListener('submit', (evt) => {evt.preventDefault();
+imgForm.addEventListener('submit', (evt) => {
+  evt.preventDefault();
   handleFormSubmitAddImage(evt, imgName, imgUrl, placesList);
   imgName.value = '';
   imgUrl.value = '';
@@ -72,62 +73,58 @@ imgForm.addEventListener('submit', (evt) => {evt.preventDefault();
 // рендер 
 function renderCards(cards, container) {
   cards.forEach((card) => {
-    const cardElem = createCard();
-      const cardTitle = cardElem.querySelector('.card__title'); 
-      const cardImage = cardElem.querySelector('.card__image');
-      cardTitle.textContent = card.name;
-      cardImage.src = card.link;
-      cardImage.alt = card.name;
-       container.append(cardElem);
-      cardImage.addEventListener("click", () => { openImagePopup(cardImage.src, cardImage.alt, cardTitle.textContent) });
-    
+    const cardElem = createCard(card, {
+      deleteCard: deleteCard,
+      handleLikeClick: handleLikeClick,
+      handleImageClick: () => openImagePopup(card.link, card.name, card.name)
+    });
+
+    container.append(cardElem);
+
   });
 }
 
 //открытие профиля
 function openProfileModal(modal, nameInput, jobInput, profilName, profilDesc) {
-    nameInput.value = profilName.textContent;
-    jobInput.value = profilDesc.textContent;
+  nameInput.value = profilName.textContent;
+  jobInput.value = profilDesc.textContent;
   openModal(modal);
 }
- 
 
 //открыть картинку
-  const openImagePopup = (src, alt, caption) => {
+const openImagePopup = (src, alt, caption) => {
   const popupImage = popup.querySelector('.popup__image');
   const popupCaption = popup.querySelector('.popup__caption');
   popupImage.src = src;
   popupImage.alt = alt;
   popupCaption.textContent = caption;
-openModal(popup);
+  openModal(popup);
 }
 
 //сохранение
 function handleFormSubmitEditProfile(evt, nameInput, jobInput, profilName, profilDesc) {
-    evt.preventDefault(); // Эта строчка отменяет стандартную отправку формы.
+  evt.preventDefault();
 
-    // Так мы можем определить свою логику отправки.
-    const nameInputValue = nameInput.value;
-    const jobInputValue = jobInput.value;
+  const nameInputValue = nameInput.value;
+  const jobInputValue = jobInput.value;
 
-    profilName.textContent = nameInputValue;
-    profilDesc.textContent = jobInputValue;
+  profilName.textContent = nameInputValue;
+  profilDesc.textContent = jobInputValue;
 }
 
 
 function handleFormSubmitAddImage(evt, imgName, imgUrl, placesList) {
-    evt.preventDefault();
+  evt.preventDefault();
 
-    const newImg = imgName.value;
-    const newUrl = imgUrl.value;
-    const cardElem = createCard();
-    const cardTitle = cardElem.querySelector('.card__title');
-    const cardImage = cardElem.querySelector('.card__image');
-    cardTitle.textContent = newImg;
-    cardImage.src = newUrl;
-    cardImage.alt = newImg;
+  const newImg = imgName.value;
+  const newUrl = imgUrl.value;
+  const card = { name: newImg, link: newUrl };
+  const cardElem = createCard(card, {
+    deleteCard: deleteCard,
+    handleLikeClick: handleLikeClick,
+    handleImageClick: () => openImagePopup(card.link, card.name, card.name)
+  });
+  placesList.prepend(cardElem);
 
-    placesList.prepend(cardElem);
-    cardImage.addEventListener("click", () => { openImagePopup(cardImage.src, cardImage.alt, cardTitle.textContent) });
 }
 
