@@ -1,4 +1,3 @@
-// validation.js
 
 export function enableValidation(config) {
   const { formSelector, inputSelector, submitButtonSelector, inactiveButtonClass, inputErrorClass, errorClass } = config;
@@ -10,10 +9,27 @@ export function enableValidation(config) {
 
     // Обработчик для каждого инпута
     inputs.forEach((input) => {
+      // Проверяем сразу при загрузке
+      validateInput(form, input, config);
+      // Обработчик при вводе
       input.addEventListener('input', () => {
         validateInput(form, input, config);
         toggleButtonState(inputs, submitButton, inactiveButtonClass);
       });
+    });
+
+    // Обработчик отправки формы
+    form.addEventListener('submit', (e) => {
+      e.preventDefault(); // Предотвращаем отправку
+      let isFormValid = true;
+      inputs.forEach((input) => {
+        const valid = validateInput(form, input, config);
+        if (!valid) {
+          isFormValid = false;
+        }
+      });
+      toggleButtonState(inputs, submitButton, inactiveButtonClass);
+     
     });
 
     // Первичная установка состояния кнопки
@@ -27,9 +43,8 @@ export function clearValidation(form, config) {
   const button = form.querySelector(submitButtonSelector);
 
   inputs.forEach((input) => {
-    // Очистка ошибок
     hideInputError(form, input, config);
-    input.value = ''; // Очистка поля
+    input.value = '';
   });
   toggleButtonState(inputs, button, inactiveButtonClass);
 }
@@ -42,40 +57,36 @@ function validateInput(form, input, config) {
 
   // Обязательное поле
   if (!input.value.trim()) {
-    showInputError(input, 'Это обязательное поле', errorElement, input, config);
+    showInputError(input, 'Это обязательное поле', errorElement, form, config);
     isValid = false;
   } else {
-    // Специальная проверка для имени и названия
+    // Проверки по типу и имени
     if (input.name === 'name' || input.name === 'place-name') {
-      // Проверка длины
       if (input.name === 'name' && (input.value.length < 2 || input.value.length > 40)) {
-        showInputError(input, 'Должно быть от 2 до 40 символов', errorElement, input, config);
+        showInputError(input, 'Должно быть от 2 до 40 символов', errorElement, form, config);
         isValid = false;
       } else if (input.name === 'place-name' && (input.value.length < 2 || input.value.length > 30)) {
-        showInputError(input, 'Должно быть от 2 до 30 символов', errorElement, input, config);
+        showInputError(input, 'Должно быть от 2 до 30 символов', errorElement, form, config);
         isValid = false;
       } else {
-        // Проверка с помощью регулярного выражения
         const namePattern = /^[A-Za-zА-Яа-яЁёЇїІіЄєҐґ\s-]+$/;
         if (!namePattern.test(input.value)) {
-          showInputError(input, 'Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы', errorElement, input, config);
+          showInputError(input, 'Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы', errorElement, form, config);
           isValid = false;
         }
       }
     }
 
-    // Проверка URL для ссылки
     if (input.type === 'url') {
       if (!isValidUrl(input.value)) {
-        showInputError(input, 'Пожалуйста, введите валидную ссылку', errorElement, input, config);
+        showInputError(input, 'Пожалуйста, введите валидную ссылку', errorElement, form, config);
         isValid = false;
       }
     }
 
-    // Проверка длины для description
     if (input.name === 'description') {
       if (input.value.length < 2 || input.value.length > 200) {
-        showInputError(input, 'Должно быть от 2 до 200 символов', errorElement, input, config);
+        showInputError(input, 'Должно быть от 2 до 200 символов', errorElement, form, config);
         isValid = false;
       }
     }
@@ -89,7 +100,7 @@ function validateInput(form, input, config) {
 }
 
 // Вспомогательные функции
-function showInputError(input, message, errorElement, formInput, config) {
+function showInputError(input, message, errorElement, form, config) {
   input.classList.add(config.inputErrorClass);
   setCustomValidationMessage(input, message);
   if (errorElement) {
@@ -109,15 +120,13 @@ function hideInputError(form, input, config) {
 }
 
 function getErrorElement(form, input) {
-  // Предположим, что у каждого input есть соответствующий элемент для ошибок с id вида 'error-{input.name}'
   const errorId = `error-${input.name}`;
   return form.querySelector(`#${errorId}`);
 }
 
 function setCustomValidationMessage(input, message) {
-  // Можно использовать встроенное свойство validationMessage или data-атрибут
   input.setCustomValidity(message);
-  input.reportValidity();
+
 }
 
 function toggleButtonState(inputs, button, inactiveClass) {

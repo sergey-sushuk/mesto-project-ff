@@ -39,9 +39,11 @@
         <button type="button" class="popup__close"></button>
         <h3 class="popup__title">Редактировать профиль</h3>
         <form class="popup__form" name="edit-profile">
-          <input type="text" name="name" class="popup__input popup__input_type_name"  placeholder="Имя" required />
+          <input type="text" name="name" class="popup__input popup__input_type_name"  placeholder="Имя" required >
+           <span class="popup__error" id="error-name"></span>
           <input type="text" name="description" class="popup__input popup__input_type_description" placeholder="Занятие"
             required>
+              <span class="popup__error" id="error-description"></span>
           <button type="submit" class="button popup__button">Сохранить</button>
         </form>
       </div>
@@ -53,8 +55,10 @@
         <form class="popup__form" name="new-place">
           <input type="text" name="place-name" class="popup__input popup__input_type_card-name" placeholder="Название"
             required>
+               <span class="popup__error" id="error-place-name"></span>
           <input type="url" name="link" class="popup__input popup__input_type_url" placeholder="Ссылка на картинку"
             required>
+               <span class="popup__error" id="error-link"></span>
           <button type="submit" class="button popup__button">Сохранить</button>
         </form>
       </div>
@@ -68,17 +72,36 @@
     </div>
   </div>
 
-  <template id="card-template">
-    <li class="places__item card">
-      <img class="card__image" src="" alt="" />
-      <button type="button" class="card__delete-button"></button>
-      <div class="card__description">
-        <h2 class="card__title">
-        </h2>
-        <button type="button" class="card__like-button"></button>
-      </div>
-    </li>
-  </template>
+  <div class="popup popup_type_avatar">
+                <div class="popup__content">
+                    <button type="button" class="popup__close"></button>
+                    <h3 class="popup__title">Обновить аватар</h3>
+                    <form class="popup__form" name="avatar-form">
+                        <input type="url" name="avatar-link" class="popup__input popup__input_type_url" placeholder="Ссылка на аватар" id="avatar-input" data-error-message="Введите корректный URL" required />
+                        <span class="popup__input-error avatar-input-error"></span>
+                        <button type="submit" class="button popup__button">Сохранить</button>
+                    </form>
+                </div>
+            </div>
+
+ <template id="card-template">
+      <li class="places__item card">
+        <img class="card__image" src="#" alt="" />
+        <button type="button" class="card__delete-button"></button>
+        <div class="card__description">
+          <h2 class="card__title"></h2>
+          <div class="card__like-container">
+            <button type="button" class="card__like-button"></button>
+            <span class="card__like-counter"></span>
+          </div>
+        </div>
+      </li>
+    </template>
+
+
+
+    
+  </div>
 </body>
 
 </html>
