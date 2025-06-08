@@ -152,11 +152,10 @@ const input = { name: nameInput.value, about: jobInput.value };
 
 function handleFormSubmitAddImage(evt, imgName, imgUrl, placesList) {
   evt.preventDefault();
-
+  load(true, imgForm);
   const newImg = imgName.value;
   const newUrl = imgUrl.value;
    const card = { name: newImg, link: newUrl };
-   load(true, imgForm);
   addCard(card)
     .then((newCardData) => {
         const cardElem = createCard(newCardData, {
