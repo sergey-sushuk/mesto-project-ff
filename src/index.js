@@ -1,4 +1,4 @@
-import '/pages/index.css';
+import './pages/index.css';
 import { createCard, likeBtnClick } from './card.js';
 import {
   closeModal,
@@ -53,6 +53,8 @@ avatarBtn.addEventListener('click', () => {
         avatarBtn.style.backgroundImage = `url(${user.avatar})`;
       }
    renderCards(initialCards, placesList);
+    }).catch((err) => {
+      console.error(`Ошибка: ${err}`);
     });
 
 
@@ -82,19 +84,12 @@ addBtn.addEventListener('click', () => {
 });
 
 //закрытие по оверлей
-document.querySelectorAll('.popup').forEach(modal => {
+popups.forEach(modal => {
   modal.addEventListener('click', (evt) => {
     if (evt.target === modal) {
       closeModal(modal);
     
     }
-  });
-});
-
-// Можно добавить обработчик для закрытия по кнопке или клику вне содержимого
-document.querySelectorAll('.popup__close').forEach(btn => {
-  btn.addEventListener('click', () => {
-    btn.closest('.popup').classList.remove('popup_opened');
   });
 });
 

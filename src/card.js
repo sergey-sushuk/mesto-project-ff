@@ -40,23 +40,14 @@ export function createCard(item, { handleLikeClick, handleImageClick },userId) {
 
 
   likeBtn.addEventListener('click', (event) => {
-    likeBtnClick(event, item);
+    likeBtnClick(event, item, likeCounter, likeBtn);
   });
 
   return cardElement;
 }
 
-//like
-// export const handleLikeClick = (cardElement) => {
-//   cardElement.querySelector('.card__like-button').classList.toggle('card__like-button_is-active');
-
-// };
-
-export const likeBtnClick = (event, cardData) => {
-  const likeButton = event.target.closest('.card__like-button');
-  const likeContainer = event.target.closest('.card__like-container');
-  const likeCounter = likeContainer.querySelector('.card__like-counter');
-  if (likeButton) {
+export const likeBtnClick = (event, cardData, likeCounter, likeButton) => {
+   if (likeButton) {
     const isLiked = likeButton.classList.contains('card__like-button_is-active');
 
     if (isLiked) {

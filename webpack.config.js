@@ -6,7 +6,7 @@ module.exports = {
   output: {
     filename: 'main.js',
     path: path.resolve(__dirname, 'dist'),
-    publicPath: '',
+    publicPath: '/',
   },
   mode: 'development',
   devServer: {
@@ -24,6 +24,18 @@ module.exports = {
           'css-loader'
         ],
       },
+      {
+        test: /\.html$/i,
+        loader: 'html-loader'
+      },
+      {
+                test: /\.(png|svg|jpg|jpeg|gif)$/i,
+                type: 'asset/resource',
+                generator: {
+                    filename: 'images/[name].[hash][ext]'
+                }
+            
+          },
      {
   test: /\.js$/, // Обрабатываем все JS файлы
   exclude: /node_modules/, // исключая node_modules
@@ -33,6 +45,14 @@ module.exports = {
 }
     ],
   },
+
+  resolve: {
+        modules: [
+            path.resolve(__dirname, 'src'),
+            path.resolve(__dirname, 'images'),
+            'node_modules'
+        ]
+    },
   plugins: [
     new MiniCssExtractPlugin({
       filename: 'styles.css',
